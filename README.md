@@ -46,7 +46,7 @@
 
 <h2>Motivação</h2>
     <p>
-        A ideia de criar o bot surgiu após a criação de um artigo sobre o método de Martingale aplicado ao mercado
+        A ideia de criar o bot surgiu após a necessidade de criação de um artigo meu para faculdade sobre o método de Martingale aplicado ao mercado
         financeiro, com uso de bolsa de valores.
     </p>
 
