@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Martingale Betting Bot</title>
+<title>Martingale Bot de Aposta</title>
 </head>
 
 <body>
 
-<h1>Martingale Betting Bot</h1>
+<h1>Martingale Bot de Aposta</h1>
 
 <p>
         Este repositório contém um bot desenvolvido em Python com auxílio de Selenium para aplicar o método de
