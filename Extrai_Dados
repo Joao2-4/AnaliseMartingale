@@ -1,0 +1,55 @@
+import requests
+import json
+import os
+from tqdm import tqdm  # Importa a barra de progresso
+
+# URL base do endpoint da API com paginação
+url_base = "https://jonbet.com/api/roulette_games/history"
+
+#url_base = "https://blaze1.space/api/crash_games/history"
+#url_base = "https://jonbet.com/api/crash_games/history"
+
+# Lista para armazenar todos os resultados
+todos_resultados = []
+
+# Número de páginas que queremos concatenar (até 20 páginas)
+num_paginas = 900
+
+# Usando tqdm para mostrar o progresso do loop
+for pagina in tqdm(range(1, num_paginas + 1), desc="Obtendo dados", unit="página"):
+    # Construa a URL com o parâmetro de página
+    url = f"{url_base}?page={pagina}"
+    
+    # Fazer a requisição para a página atual
+    resposta = requests.get(url)
+    
+    if resposta.status_code == 200:
+        # Adicionar os dados da chave 'records' da página atual à lista de todos os resultados
+        data = resposta.json()
+        if 'records' in data:
+            todos_resultados.extend(data['records'])
+        else:
+            print(f"A chave 'records' não encontrada na página {pagina}")
+            break
+    else:
+        print(f"Erro ao acessar a página {pagina}: {resposta.status_code}")
+        break
+
+# Formatar os dados para JSON legível
+json_formatado = json.dumps(todos_resultados, indent=4)
+
+# Diretório onde o arquivo será salvo
+diretorio = "resultados_api"
+
+# Criar o diretório se não existir
+if not os.path.exists(diretorio):
+    os.makedirs(diretorio)
+
+# Caminho completo do arquivo
+caminho_arquivo = os.path.join(diretorio, "resultados_hoje_jon.json")
+
+# Salvar o JSON formatado no arquivo
+with open(caminho_arquivo, "w") as arquivo:
+    arquivo.write(json_formatado)
+
+print(f"Arquivo salvo com sucesso em: {caminho_arquivo}")
