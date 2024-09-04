@@ -1,0 +1,226 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+import time
+import json
+import requests
+
+# Caminho para o ChromeDriver
+chrome_driver_path = "C:\\Users\\xxxxxxxxxxxxx\\Downloads\\chromedriver-win64\\chromedriver.exe"
+
+# Configurando o WebDriver
+service = Service(chrome_driver_path)
+driver = webdriver.Chrome(service=service)
+
+# Abrir uma página web
+driver.get("https://blaze.com/pt/games/double")
+
+# Aguardar um pouco para garantir que a página carregue
+time.sleep(5)
+
+# Localizar o elemento pelo XPath e clicar nele
+xpath = '//*[@id="header"]/div/div[2]/div/div/div[1]/a'
+element = driver.find_element(By.XPATH, xpath)
+element.click()
+
+# Aguardar a nova página/modal carregar
+time.sleep(5)
+
+# Localizar o primeiro campo de entrada pelo XPath e preenchê-lo
+input_xpath_1 = '//*[@id="auth-modal"]/div[2]/form/div[1]/div/input'
+input_element_1 = driver.find_element(By.XPATH, input_xpath_1)
+input_element_1.send_keys("xxxxxxxxxxxxxxxx")
+
+# Localizar o segundo campo de entrada pelo XPath e preenchê-lo
+input_xpath_2 = '//*[@id="auth-modal"]/div[2]/form/div[2]/div/input'
+input_element_2 = driver.find_element(By.XPATH, input_xpath_2)
+input_element_2.send_keys("xxxxxxxxxxxxx")
+
+# Localizar o botão pelo XPath e clicar nele
+button_xpath = '//*[@id="auth-modal"]/div[2]/form/div[4]/button'
+button_element = driver.find_element(By.XPATH, button_xpath)
+button_element.click()
+
+# Aguardar o tempo necessário para as operações serem concluídas
+time.sleep(10)
+
+# Lista para armazenar os resultados
+resultados = []
+
+# Variável para armazenar o último server_seed visto
+ultimo_server_seed = None
+
+# Listas de valores de aposta
+valores_aposta = [1, 2, 4,234234]
+valores_aposta2 = [0.16, 0.32, 0.66,234234]
+
+# Índice para acompanhar qual valor usar
+indice_aposta = 0
+indice_aposta2 = 0
+
+def verificar_cores2():
+    resposta = requests.get("https://blaze1.space/api/roulette_games/recent")
+    json_resposta = resposta.json()
+
+    # Pegar o último resultado
+    ultimo_jogo = json_resposta[0]
+
+    # Obter a cor do último resultado
+    cor_atual = ultimo_jogo.get("color")
+
+    # Mapear os valores para as cores
+    if cor_atual == 2:
+        cor_atual = "preto"
+    elif cor_atual == 1:
+        cor_atual = "vermelho"
+    else:
+        cor_atual = "branco"
+
+    return cor_atual
+
+
+def verificar_cores():
+    global resultados
+    global ultimo_server_seed
+    global indice_aposta
+    global indice_aposta2
+
+    resposta = requests.get("https://blaze1.space/api/roulette_games/recent")
+    json_resposta = resposta.json()
+
+    # Pegar o último resultado
+    ultimo_jogo = json_resposta[0]
+
+    # Obter o server_seed e a cor do último resultado
+    server_seed_atual = ultimo_jogo.get("server_seed")
+    color_value = ultimo_jogo.get("color")
+
+    # Mapear os valores para as cores
+    if color_value == 2:
+        cor = "preto"
+    elif color_value == 1:
+        cor = "vermelho"
+    else:
+        cor = "branco"
+
+    # Adicionar a cor à lista se o server_seed for diferente do anterior
+    if server_seed_atual != ultimo_server_seed:
+        resultados.append(cor)
+        ultimo_server_seed = server_seed_atual
+        
+        # Manter apenas os últimos 11 resultados
+        if len(resultados) > 11:
+            resultados.pop(0)
+
+    print("Resultados:", resultados)
+
+    # Seleciona o valor de aposta atual baseado no índice
+    valor_atual = valores_aposta[indice_aposta]
+    valor_atual2 = valores_aposta2[indice_aposta2]
+    
+    contador_execucoes = 0
+    MAX_EXECUCOES = 3
+
+    # Verifica se todas as últimas 8, 9, 10 ou 11 cores são iguais (preto ou vermelho)
+    for i in range(2, 5):
+        if len(resultados) >= i:
+            # Verifica se todas as últimas `i` cores são preto
+            if all(cor == "preto" for cor in resultados[-i:]):
+                xpath = '//*[@id="roulette-controller"]/div[1]/div[2]/div[2]/div/div[1]/div'
+                element = driver.find_element(By.XPATH, xpath)
+                element.click()
+
+                input_xpath_1 = '//*[@id="roulette-controller"]/div[1]/div[2]/div[1]/div/div[1]/input'
+                input_element_1 = driver.find_element(By.XPATH, input_xpath_1)
+                input_element_1.send_keys(str(valor_atual))
+
+                xpath = '//*[@id="roulette-controller"]/div[1]/div[3]/button'
+                element = driver.find_element(By.XPATH, xpath)
+                element.click
+
+                xpath = '//*[@id="roulette-controller"]/div[1]/div[2]/div[2]/div/div[2]/div'
+                element = driver.find_element(By.XPATH, xpath)
+                element.click()
+
+                input_xpath_1 = '//*[@id="roulette-controller"]/div[1]/div[2]/div[1]/div/div[1]/input'
+                input_element_1 = driver.find_element(By.XPATH, input_xpath_1)
+                input_element_1.send_keys(str(valor_atual2))
+
+                xpath = '//*[@id="roulette-controller"]/div[1]/div[3]/button'
+                element = driver.find_element(By.XPATH, xpath)
+                element.click()
+                time.sleep(28)
+                
+                cor_atual2 = verificar_cores2()
+
+                if cor_atual2 != cor:
+                    print(f"Cor atual {cor} não corresponde à cor obtida de verificar_cores2(): {cor_atual2}. Interrompendo loop e reiniciando índices.")
+                    # Reinicia os índices para 0
+                    indice_aposta = 0
+                    indice_aposta2 = 0
+                    break
+
+                # Atualiza o índice de aposta
+                indice_aposta = (indice_aposta + 1)
+                indice_aposta2 = (indice_aposta2 + 1) 
+
+                if contador_execucoes >= MAX_EXECUCOES:
+                    print("Número máximo de execuções atingido. Reiniciando índices.")
+                    contador_execucoes = 0
+                    # Reinicie os índices após 3 execuções
+                    indice_aposta = 0
+                    indice_aposta2 = 0
+
+            # Verifica se todas as últimas `i` cores são vermelho
+            elif all(cor == "vermelho" for cor in resultados[-i:]):
+                xpath = '//*[@id="roulette-controller"]/div[1]/div[2]/div[2]/div/div[3]/div'
+                element = driver.find_element(By.XPATH, xpath)
+                element.click()
+
+                input_xpath_1 = '//*[@id="roulette-controller"]/div[1]/div[2]/div[1]/div/div[1]/input'
+                input_element_1 = driver.find_element(By.XPATH, input_xpath_1)
+                input_element_1.send_keys(str(valor_atual))
+
+                xpath = '//*[@id="roulette-controller"]/div[1]/div[3]/button'
+                element = driver.find_element(By.XPATH, xpath)
+                element.click()
+
+                xpath = '//*[@id="roulette-controller"]/div[1]/div[2]/div[2]/div/div[2]/div'
+                element = driver.find_element(By.XPATH, xpath)
+                element.click()
+
+                input_xpath_1 = '//*[@id="roulette-controller"]/div[1]/div[2]/div[1]/div/div[1]/input'
+                input_element_1 = driver.find_element(By.XPATH, input_xpath_1)
+                input_element_1.send_keys(str(valor_atual2))
+
+                xpath = '//*[@id="roulette-controller"]/div[1]/div[3]/button'
+                element = driver.find_element(By.XPATH, xpath)
+                element.click()
+                time.sleep(28)
+
+                cor_atual2 = verificar_cores2()
+
+                if cor_atual2 != cor:
+                    print(f"Cor atual {cor} não corresponde à cor obtida de verificar_cores2(): {cor_atual2}. Interrompendo loop e reiniciando índices.")
+                    # Reinicia os índices para 0
+                    indice_aposta = 0
+                    indice_aposta2 = 0
+                    break
+
+                # Atualiza o índice de aposta
+                indice_aposta = (indice_aposta + 1) 
+                indice_aposta2 = (indice_aposta2 + 1) 
+
+                contador_execucoes += 1
+
+                        # Verifica se o número máximo de execuções foi alcançado
+                if contador_execucoes >= MAX_EXECUCOES:
+                        print("Número máximo de execuções atingido. Reiniciando índices.")
+                        contador_execucoes = 0
+                        # Reinicie os índices após 3 execuções
+                        indice_aposta = 0
+                        indice_aposta2 = 0
+
+while True:
+    verificar_cores()
+    time.sleep(2)
