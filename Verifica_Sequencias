@@ -1,0 +1,47 @@
+import json
+from collections import defaultdict
+
+# Caminho para o arquivo JSON com os resultados
+caminho_arquivo = "resultados_api/resultados_concat.json"
+
+# Função para ler o arquivo JSON e extrair as cores em ordem cronológica
+def extrair_cores(caminho_arquivo):
+    with open(caminho_arquivo, 'r') as f:
+        dados = json.load(f)
+    
+    cores = [item['color'] for item in dados]
+    return cores
+
+# Função para encontrar e contar as sequências de cores
+def contar_sequencias(cores):
+    sequencias = defaultdict(int)
+    current_color = None
+    current_length = 0
+    
+    for cor in cores:
+        if cor == current_color:
+            current_length += 1
+        else:
+            if current_color is not None:
+                sequencias[current_length] += 1
+            current_color = cor
+            current_length = 1
+    
+    # Adiciona a última sequência
+    if current_color is not None:
+        sequencias[current_length] += 1
+    
+    return sequencias
+
+# Função principal para executar o processo
+def main():
+    cores = extrair_cores(caminho_arquivo)
+    sequencias = contar_sequencias(cores)
+    
+    # Exibir as contagens das sequências contínuas
+    print("Distribuição das sequências contínuas de cores:")
+    for comprimento, contagem in sorted(sequencias.items(), reverse=True):
+        print(f"Sequências de comprimento {comprimento}: {contagem} vez(es)")
+
+if __name__ == "__main__":
+    main()
