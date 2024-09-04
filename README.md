@@ -25,7 +25,8 @@
     <p>
         A ideia básica do método de Martingale é simples: após cada perda, você dobra o valor da sua aposta na rodada
         seguinte. Quando eventualmente você ganhar, o lucro obtido será suficiente para cobrir todas as perdas
-        anteriores, mais um pequeno ganho equivalente à aposta original. OBS: Bot contem Stop Loss de 3 rodadas, para nao gerar perdar em grande escala.
+        anteriores, mais um pequeno ganho equivalente à aposta original. 
+        <strong style="color:red;">OBS: Bot contém Stop Loss de 3 rodadas, para não gerar perdas em grande escala. O BOT AINDA NECESSITA DE ALGUNS AJUSTES REFERENTES A APLICAR O MARTINGALE NA TERCEIRA RODADA.</strong>
     </p>
 
 <h4>Exemplo:</h4>
